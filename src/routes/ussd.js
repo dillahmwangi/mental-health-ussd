@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+require('dotenv').config();
+
+const sms = AT.SMS;
 
 router.post('/', (req, res) =>{
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
@@ -41,6 +44,50 @@ router.post('/', (req, res) =>{
         1. Counselor
         2. Psychologist
         3. Psychiatrist`;
+    } else if (text === '5*1' || text === '5*2' || text === '5*3') {
+        response = `CON Select the time
+        1. Morning
+        2. Afternoon
+        3. Evening`;
+    } else if (text.startsWith('5*1*') || text.startsWith('5*2*') || text.startsWith('5*3*')) {
+        const textArray = text.split('*');
+        if (textArray.length === 3) {
+            response = `CON Select appointment type
+            1. Physical
+            2. Online`;
+        } else if (textArray.length === 4) {
+            const appointmentTypeMap = {
+                '5*1': 'Counselor',
+                '5*2': 'Psychologist',
+                '5*3': 'Psychiatrist'
+            };
+            const timeMap = {
+                '1': 'Morning',
+                '2': 'Afternoon',
+                '3': 'Evening'
+            };
+
+            const appointmentType = appointmentTypeMap[`${textArray[0]}*${textArray[1]}`];
+            const time = timeMap[textArray[2]];
+            const sessionType = textArray[3] === '1' ? 'Physical' : 'Online';
+
+            response = `END You have booked an appointment with a ${appointmentType} in the ${time} for a ${sessionType} session. You will receive an SMS confirmation shortly.`;
+
+            // Send SMS confirmation
+            const options = {
+                to: [phoneNumber],
+                message: `Your appointment with a ${appointmentType} in the ${time} for a ${sessionType} session is confirmed.`
+            };
+
+            sms.send(options)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    
     } else if (text === '6') {
         response = `CON Anonymous Support Groups
         1. Depression Support Group
