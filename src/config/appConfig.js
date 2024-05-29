@@ -8,6 +8,5 @@ const config = {
   }
 };
 
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 module.exports = config;

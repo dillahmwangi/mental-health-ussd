@@ -1,23 +1,22 @@
-import { GoogleGenerativeAI }  from "@google/generative-ai";
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const express = require('express');
 const router = express.Router();
 require('dotenv').config();
 
 const credentials = {
-    apiKey: 'MyAppAPIkey',
-    username: 'MyAppUsername',
+    apiKey: 'e6bd7c3bf8272e96742c0fbcbf862e8b5391f7347a6103450b946ebcee96598f',
+    username: 'itAirtime',
 }
 
 const Africastalking = require('africastalking')(credentials);
 
 // Get the SMS service
 const sms = Africastalking.SMS;
+const voice = Africastalking.VOICE;
 
 
-// Import the OpenAI library
-const { OpenAI } = require('openai-api');
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
+const genAI = new GoogleGenerativeAI(process.env.GEMINIAI_API_KEY);
 
 
 router.post('/', async(req, res) =>{
@@ -38,24 +37,55 @@ router.post('/', async(req, res) =>{
         7. Coping Strategies`;
     } else if (text === '1') {
         try {
-            const completion = await openai.complete({
-                engine: 'davinci', // You can use other engines based on your preference
-                prompt: "Generate information on mental health.",
-                maxTokens: 150 // Adjust the token count as needed
-            });
-            response = `END Mental Health Information: ${completion.data.choices[0].text.trim()}`;
-        } catch (error) {
-            console.error("Error generating mental health information:", error);
-            response = `END Error generating mental health information. Please try again later.`;
+           
+            let model = genAI.getGenerativeModel({ model: "gemini-pro"});
+            let prompt = 'Generate information for mental health' + "Please limit the promote to 100 characters";
+            let result = await model.generateContent(prompt);
+            let response = await result.response;
+            let text = await response.text();
+        
+            const options = {
+                to: [phoneNumber],
+                message: `${text}`
+            };
+
+            sms.send(options)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.error(error);
+                });        
+            console.log(text);
+            response = `END Thank you`
+            } catch (error) {
+            console.error("Error generating infromation tools:", error);
+            response = `END Error generating Information. Please try again later.`;
         }
     } else if (text === '2') {
         try {
-            const completion = await openai.complete({
-                engine: 'davinci', // You can use other engines based on your preference
-                prompt: "Generate self-assessment tools for mental health.",
-                maxTokens: 150 // Adjust the token count as needed
-            });
-            response = `END Self-Assessment Tools: ${completion.data.choices[0].text.trim()}`;
+           
+            let model = genAI.getGenerativeModel({ model: "gemini-pro"});
+            let prompt = 'Generate self-assessment tools for mental health' + "Please limit the promote to 100 characters";
+            let result = await model.generateContent(prompt);
+            let response = await result.response;
+            let text = await response.text();
+        
+            const options = {
+                to: [phoneNumber],
+                message: `${text}`
+            };
+
+            sms.send(options)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.error(error);
+                });        
+        
+            console.log(text);
+            response = `END Self-Assessment Tools`;
         } catch (error) {
             console.error("Error generating self-assessment tools:", error);
             response = `END Error generating self-assessment tools. Please try again later.`;
@@ -63,7 +93,7 @@ router.post('/', async(req, res) =>{
     } else if (text === '3') {
         // Make a call to the user
         voice.call({
-            callFrom: 'your_africas_talking_virtual_number', // Replace with your Africa's Talking virtual number
+            callFrom: '+254111052352', // Replace with your Africa's Talking virtual number
             callTo: phoneNumber
         }).then((response) => {
             console.log(response);
@@ -134,13 +164,18 @@ router.post('/', async(req, res) =>{
         1. Depression Support Group
         2. Anxiety Support Group
         3. Substance Abuse Support Group`;
-    } else if (text === '7') {
+       
+    } 
+    else if (text === '6*2') {
+        response = `END Thank you for participating in our anonymous support group for anxiety. We hope you`
+    }
+    else if (text === '7') {
         response = `CON Coping Strategies
         1. Breathing Exercises
         2. Mindfulness Techniques
         3. Progressive Muscle Relaxation`;
     } else {
-        response = `END Invalid option. Please try again.`;
+        response = `END Thank you for reaching out.`;
     }
     // Send the response back to the API
     res.set('Content-Type', 'text/plain');
