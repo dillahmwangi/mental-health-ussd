@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI }  from "@google/generative-ai";
 const express = require('express');
 const router = express.Router();
 require('dotenv').config();
@@ -13,8 +14,13 @@ const Africastalking = require('africastalking')(credentials);
 const sms = Africastalking.SMS;
 
 
+// Import the OpenAI library
+const { OpenAI } = require('openai-api');
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-router.post('/', (req, res) =>{
+
+
+router.post('/', async(req, res) =>{
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
 
     let response = '';
@@ -31,21 +37,46 @@ router.post('/', (req, res) =>{
         6. Anonymous Support Groups
         7. Coping Strategies`;
     } else if (text === '1') {
-        response = `CON Mental Health Information
-        1. Understanding Depression
-        2. Anxiety Disorders
-        3. Stress Management Tips
-        4. General Mental Health Tips`;
+        try {
+            const completion = await openai.complete({
+                engine: 'davinci', // You can use other engines based on your preference
+                prompt: "Generate information on mental health.",
+                maxTokens: 150 // Adjust the token count as needed
+            });
+            response = `END Mental Health Information: ${completion.data.choices[0].text.trim()}`;
+        } catch (error) {
+            console.error("Error generating mental health information:", error);
+            response = `END Error generating mental health information. Please try again later.`;
+        }
     } else if (text === '2') {
-        response = `CON Self-Assessment Tools
-        1. Depression Assessment
-        2. Anxiety Assessment
-        3. Stress Level Assessment`;
+        try {
+            const completion = await openai.complete({
+                engine: 'davinci', // You can use other engines based on your preference
+                prompt: "Generate self-assessment tools for mental health.",
+                maxTokens: 150 // Adjust the token count as needed
+            });
+            response = `END Self-Assessment Tools: ${completion.data.choices[0].text.trim()}`;
+        } catch (error) {
+            console.error("Error generating self-assessment tools:", error);
+            response = `END Error generating self-assessment tools. Please try again later.`;
+        }
     } else if (text === '3') {
-        response = `END Emergency Contacts
-        1. Suicide Prevention Hotline: 123-456-789
-        2. Local Mental Health Clinics: 987-654-321
-        3. Crisis Text Line: Text HOME to 741741`;
+        // Make a call to the user
+        voice.call({
+            callFrom: 'your_africas_talking_virtual_number', // Replace with your Africa's Talking virtual number
+            callTo: phoneNumber
+        }).then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.error(error);
+        });
+
+        response = `END You will receive a call shortly.`;
+    // } else if (text === '3') {
+    //     response = `END Emergency Contacts
+    //     1. Suicide Prevention Hotline: 123-456-789
+    //     2. Local Mental Health Clinics: 987-654-321
+    //     3. Crisis Text Line: Text HOME to 741741`;
     } else if (text === '4') {
         response = `END You have subscribed to Daily Positive Affirmations`;
         // Implement subscription logic here
