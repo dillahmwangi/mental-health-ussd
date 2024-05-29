@@ -119,13 +119,15 @@ router.post('/', async(req, res) =>{
         response = `CON Select the time
         1. Morning
         2. Afternoon
-        3. Evening`;
+        3. Evening
+        0. Back to Main Menu`;
     } else if (text.startsWith('5*1*') || text.startsWith('5*2*') || text.startsWith('5*3*')) {
         const textArray = text.split('*');
         if (textArray.length === 3) {
             response = `CON Select appointment type
             1. Physical
-            2. Online`;
+            2. Online
+            0. Back to Main Menu`;
         } else if (textArray.length === 4) {
             const appointmentTypeMap = {
                 '5*1': 'Counselor',
@@ -163,17 +165,26 @@ router.post('/', async(req, res) =>{
         response = `CON Anonymous Support Groups
         1. Depression Support Group
         2. Anxiety Support Group
-        3. Substance Abuse Support Group`;
+        3. Substance Abuse Support Group
+        0. Back to Main Menu`;
        
     } 
-    else if (text === '6*2') {
-        response = `END Thank you for participating in our anonymous support group for anxiety. We hope you`
+    else if (text === '6*1') {
+        response = ` END Thank you for reaching out`
     }
+    else if (text === '6*2') {
+        response = `END Thank you for reaching out`
+    }
+    else if (text === '6*3') {
+        response = `END Thank you for reaching out`
+    }
+
     else if (text === '7') {
         response = `CON Coping Strategies
         1. Breathing Exercises
         2. Mindfulness Techniques
-        3. Progressive Muscle Relaxation`;
+        3. Progressive Muscle Relaxation
+        0. Back to Main Menu`;
     } else {
         response = `END Thank you for reaching out.`;
     }
