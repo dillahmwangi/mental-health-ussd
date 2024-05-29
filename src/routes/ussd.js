@@ -27,7 +27,7 @@ router.post('/', async(req, res) =>{
 
     if (text === '') {
         // Initial menu
-        response = `CON Welcome to Mental Health Support
+        response = `CON Welcome to Mindcare connect
         1. Mental Health Information
         2. Self-Assessment Tools
         3. Emergency Contacts
@@ -35,7 +35,9 @@ router.post('/', async(req, res) =>{
         5. Book an Appointment
         6. Anonymous Support Groups
         7. Coping Strategies`;
+        
     } else if (text === '1') {
+
         try {
            
             let model = genAI.getGenerativeModel({ model: "gemini-pro"});
@@ -91,6 +93,7 @@ router.post('/', async(req, res) =>{
             response = `END Error generating self-assessment tools. Please try again later.`;
         }
     } else if (text === '3') {
+        
         // Make a call to the user
         voice.call({
             callFrom: '+254111052352', // Replace with your Africa's Talking virtual number
@@ -122,6 +125,15 @@ router.post('/', async(req, res) =>{
         2. Afternoon
         3. Evening
         0. Back to Main Menu`;
+    } else if (text === '5*0') {
+        response = `CON Welcome to Mental Health Support
+        1. Mental Health Information
+        2. Self-Assessment Tools
+        3. Emergency Contacts
+        4. Daily Positive Affirmations
+        5. Book an Appointment
+        6. Anonymous Support Groups
+        7. Coping Strategies`;
     } else if (text.startsWith('5*1*') || text.startsWith('5*2*') || text.startsWith('5*3*')) {
         const textArray = text.split('*');
         if (textArray.length === 3) {
@@ -168,6 +180,15 @@ router.post('/', async(req, res) =>{
         2. Anxiety Support Group
         3. Substance Abuse Support Group
         0. Back to Main Menu`;
+    } else if (text === '6*0') {
+        response = `CON Welcome to Mental Health Support
+        1. Mental Health Information
+        2. Self-Assessment Tools
+        3. Emergency Contacts
+        4. Daily Positive Affirmations
+        5. Book an Appointment
+        6. Anonymous Support Groups
+        7. Coping Strategies`;
        
     } 
     else if (text === '6*1') {
@@ -186,6 +207,15 @@ router.post('/', async(req, res) =>{
         2. Mindfulness Techniques
         3. Progressive Muscle Relaxation
         0. Back to Main Menu`;
+    } else if (text === '7*0') {
+        response = `CON Welcome to Mental Health Support
+        1. Mental Health Information
+        2. Self-Assessment Tools
+        3. Emergency Contacts
+        4. Daily Positive Affirmations
+        5. Book an Appointment
+        6. Anonymous Support Groups
+        7. Coping Strategies`;
     } else {
         response = `END Thank you for reaching out.`;
     }
