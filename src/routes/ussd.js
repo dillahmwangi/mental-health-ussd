@@ -1,9 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const Africastalking = require('africastalking');
 require('dotenv').config();
 
+const credentials = {
+    apiKey: 'MyAppAPIkey',
+    username: 'MyAppUsername',
+}
+
+const Africastalking = require('africastalking')(credentials);
+
+// Get the SMS service
 const sms = Africastalking.SMS;
+
+
 
 router.post('/', (req, res) =>{
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
