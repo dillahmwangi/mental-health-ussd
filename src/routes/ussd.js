@@ -114,7 +114,8 @@ router.post('/', async(req, res) =>{
         response = `CON Book an Appointment
         1. Counselor
         2. Psychologist
-        3. Psychiatrist`;
+        3. Psychiatrist
+        0. Back to Main Menu`;
     } else if (text === '5*1' || text === '5*2' || text === '5*3') {
         response = `CON Select the time
         1. Morning
