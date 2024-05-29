@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const Africastalking = require('africastalking');
 require('dotenv').config();
 
-const sms = AT.SMS;
+const sms = Africastalking.SMS;
 
 router.post('/', (req, res) =>{
     const {sessionId, serviceCode, phoneNumber, text} = req.body;
@@ -101,9 +102,6 @@ router.post('/', (req, res) =>{
     } else {
         response = `END Invalid option. Please try again.`;
     }
-
-
-
     // Send the response back to the API
     res.set('Content-Type', 'text/plain');
     res.send(response);
